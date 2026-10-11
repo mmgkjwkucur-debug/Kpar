@@ -17,6 +17,8 @@ import {
 import Link from "next/link";
 import { FormEvent, useEffect, useState } from "react";
 import { auth, db } from "@/lib/firebase";
+import { MobileHeader } from "@/components/mobile-header";
+import { MobileNav } from "@/components/mobile-nav";
 
 const classes = ["Balita", "Pratama", "Madya", "Remaja"] as const;
 type Role = "anggota" | "wali_kelas" | "coordinator" | "admin";
@@ -193,7 +195,8 @@ export default function MembersPage() {
   }
 
   return (
-    <main className="min-h-screen bg-[#f5f7f5] px-4 py-6 text-[#26392f] sm:px-8 sm:py-9">
+    <main className="min-h-screen bg-[#f5f7f5] px-4 pb-24 pt-5 text-[#26392f] sm:px-8 sm:py-9 sm:pb-24 lg:pb-9">
+      <MobileHeader title="Anggota & peran" />
       <div className="mx-auto max-w-6xl">
         <header className="mb-7 flex flex-wrap items-end justify-between gap-4">
           <div>
@@ -300,6 +303,7 @@ export default function MembersPage() {
           )}
         </section>
       </div>
+      <MobileNav active="members" canManageMembers />
     </main>
   );
 }

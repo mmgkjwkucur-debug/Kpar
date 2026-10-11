@@ -28,6 +28,8 @@ import { onAuthStateChanged } from "firebase/auth";
 import Link from "next/link";
 import { FormEvent, useCallback, useEffect, useRef, useState } from "react";
 import { auth, db } from "@/lib/firebase";
+import { MobileHeader } from "@/components/mobile-header";
+import { MobileNav } from "@/components/mobile-nav";
 
 type Access = "checking" | "unconfigured" | "signed-out" | "internal" | "forbidden";
 type Activity = { id: string; title: string; startsAt: Timestamp; published: boolean };
@@ -298,7 +300,8 @@ export default function AttendancePage() {
   const selected = activities.find((activity) => activity.id === selectedActivity);
 
   return (
-    <main className="min-h-screen bg-[#f5f7f5] px-4 py-6 text-[#26392f] sm:px-8 sm:py-9">
+    <main className="min-h-screen bg-[#f5f7f5] px-4 pb-24 pt-5 text-[#26392f] sm:px-8 sm:py-9 sm:pb-24 lg:pb-9">
+      <MobileHeader title="Absensi kegiatan" />
       <div className="mx-auto max-w-5xl">
         <header className="mb-7 flex flex-wrap items-end justify-between gap-4">
           <div>
@@ -422,6 +425,7 @@ export default function AttendancePage() {
           </div>
         )}
       </div>
+      <MobileNav active="attendance" />
     </main>
   );
 }

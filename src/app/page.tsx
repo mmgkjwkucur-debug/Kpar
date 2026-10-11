@@ -31,6 +31,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { auth, db } from "@/lib/firebase";
 import { signInWithUsername } from "@/lib/username-login";
+import { MobileNav } from "@/components/mobile-nav";
 
 type Access = "checking" | "unconfigured" | "signed-out" | "internal" | "forbidden";
 
@@ -308,7 +309,7 @@ export default function Home() {
   const draftCount = events.filter((event) => !event.published).length;
 
   return (
-    <main className="min-h-screen bg-[#f5f7f5] text-[#26392f]">
+    <main className="min-h-screen bg-[#f5f7f5] pb-24 text-[#26392f] lg:pb-0">
       <div className="mx-auto flex min-h-screen max-w-[1600px]">
         <aside className="hidden w-[250px] shrink-0 flex-col border-r border-[#e7ebe6] bg-white px-5 py-7 lg:flex">
           <Link href="/" className="mb-10 flex items-center gap-3 px-2">
@@ -366,17 +367,17 @@ export default function Home() {
         </aside>
 
         <div className="min-w-0 flex-1">
-          <header className="sticky top-0 z-20 border-b border-[#e7ebe6] bg-white/90 px-5 py-4 backdrop-blur sm:px-8 lg:px-10">
+          <header className="sticky top-0 z-30 border-b border-[#e7ebe6] bg-white/95 px-3 py-3 backdrop-blur-lg sm:px-8 sm:py-4 lg:px-10">
             <div className="flex items-center justify-between gap-4">
               <div className="flex items-center gap-3">
-                <Link href="/" className="flex size-9 items-center justify-center rounded-xl bg-[#294d3c] text-white lg:hidden">
+                  <Link href="/" className="flex size-10 items-center justify-center rounded-xl bg-[#294d3c] text-white lg:hidden">
                   <Church size={19} />
                 </Link>
                 <div>
                   <p className="text-[10px] font-medium text-[#879188]">
                     {formatDate(now, { weekday: "long", day: "numeric", month: "long", year: "numeric" })}
                   </p>
-                  <p className="mt-0.5 text-xs font-semibold text-[#405044]">Dashboard KPAR</p>
+                  <p className="mt-0.5 text-sm font-semibold text-[#405044]">KPAR GKJW · Dashboard</p>
                 </div>
               </div>
               <div className="flex items-center gap-3">
@@ -446,13 +447,13 @@ export default function Home() {
           </header>
 
           <div className="mx-auto max-w-6xl px-5 py-7 sm:px-8 sm:py-9 lg:px-10">
-            <section className="flex flex-wrap items-end justify-between gap-4">
+            <section className="flex flex-wrap items-end justify-between gap-4 rounded-3xl bg-gradient-to-br from-[#294d3c] to-[#426850] p-5 text-white shadow-[0_18px_45px_-28px_#294d3c99] sm:rounded-none sm:bg-none sm:p-0 sm:text-[#26392f] sm:shadow-none">
               <div>
-                <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#8a9b7d]">Ringkasan pelayanan</p>
-                <h1 className="mt-2 text-2xl font-semibold tracking-tight text-[#2f4737] sm:text-[30px]">
-                  Sugeng rawuh, {displayName}
+                <p className="text-[9px] font-bold uppercase tracking-[0.18em] text-white/65 sm:text-[#8a9b7d]">Ringkasan pelayanan</p>
+                <h1 className="mt-2 text-[21px] font-semibold tracking-tight sm:text-[30px] sm:text-[#2f4737]">
+                  Sugeng rawuh, <span className="break-words">{displayName}</span>
                 </h1>
-                <p className="mt-2 text-sm text-[#7f8a80]">
+                <p className="mt-2 text-xs leading-5 text-white/75 sm:text-sm sm:text-[#7f8a80]">
                   Ini ringkasan agenda dan kegiatan KPAR yang akan datang.
                 </p>
               </div>
@@ -469,7 +470,7 @@ export default function Home() {
               </p>
             )}
 
-            <section aria-label="Statistik agenda" className="mt-7 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+            <section aria-label="Statistik agenda" className="mt-5 grid grid-cols-2 gap-2.5 sm:mt-7 sm:gap-4 xl:grid-cols-4">
               <StatCard
                 icon={CalendarDays}
                 label="Agenda mendatang"
@@ -500,7 +501,7 @@ export default function Home() {
               />
             </section>
 
-            <section id="agenda-terdekat" className="mt-8 grid gap-5 xl:grid-cols-[1.45fr_0.85fr]">
+            <section id="agenda-terdekat" className="mt-5 grid scroll-mt-24 gap-4 sm:mt-8 sm:gap-5 xl:grid-cols-[1.45fr_0.85fr]">
               <div className="overflow-hidden rounded-2xl border border-[#e6ebe5] bg-white">
                 <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#edf0eb] px-5 py-4 sm:px-6">
                   <div>
@@ -611,6 +612,11 @@ export default function Home() {
             </footer>
           </div>
         </div>
+        <MobileNav
+          active="dashboard"
+          canManageMembers={isAdmin || isCoordinator}
+          isAdmin={isAdmin}
+        />
       </div>
     </main>
   );
@@ -637,16 +643,16 @@ function StatCard({
   };
 
   return (
-    <article className="rounded-2xl border border-[#e6ebe5] bg-white p-4 sm:p-5">
-      <div className="flex items-start justify-between gap-3">
-        <span className={`flex size-9 items-center justify-center rounded-xl ${colors[tint]}`}>
-          <Icon size={17} />
+    <article className="rounded-2xl border border-[#e6ebe5] bg-white p-3 sm:p-5">
+      <div className="flex items-start justify-between gap-2">
+        <span className={`flex size-8 items-center justify-center rounded-xl sm:size-9 ${colors[tint]}`}>
+          <Icon size={16} />
         </span>
-        <ArrowDownRight size={15} className="text-[#c0c8c0]" />
+        <ArrowDownRight size={13} className="text-[#c0c8c0]" />
       </div>
-      <p className="mt-4 text-[10px] font-medium text-[#879187]">{label}</p>
-      <p className="mt-1 text-2xl font-semibold tracking-tight text-[#35483a]">{value}</p>
-      <p className="mt-1 text-[9px] text-[#a0a8a0]">{note}</p>
+      <p className="mt-3 text-[9px] font-medium leading-4 text-[#879187] sm:mt-4 sm:text-[10px]">{label}</p>
+      <p className="mt-0.5 text-xl font-semibold tracking-tight text-[#35483a] sm:mt-1 sm:text-2xl">{value}</p>
+      <p className="mt-1 truncate text-[8px] text-[#a0a8a0] sm:text-[9px]">{note}</p>
     </article>
   );
 }
@@ -656,8 +662,8 @@ function EventRow({ event }: { event: EventItem }) {
   const isToday = date.toDateString() === new Date().toDateString();
 
   return (
-    <article className="flex items-start gap-3 px-5 py-4 transition hover:bg-[#fbfcfa] sm:px-6">
-      <div className="flex w-12 shrink-0 flex-col items-center rounded-xl bg-[#f3f6f1] px-2 py-2 text-center">
+    <article className="flex items-start gap-2.5 px-3.5 py-3.5 transition hover:bg-[#fbfcfa] sm:gap-3 sm:px-6 sm:py-4">
+      <div className="flex w-10 shrink-0 flex-col items-center rounded-xl bg-[#f3f6f1] px-1.5 py-2 text-center sm:w-12 sm:px-2">
         <span className="text-[16px] font-semibold leading-5 text-[#405a43]">
           {formatDate(date, { day: "2-digit" })}
         </span>
@@ -667,15 +673,15 @@ function EventRow({ event }: { event: EventItem }) {
       </div>
       <div className="min-w-0 flex-1">
         <div className="flex flex-wrap items-center gap-2">
-          <h3 className="text-xs font-semibold text-[#3e5042]">{event.title}</h3>
+          <h3 className="text-[11px] font-semibold leading-4 text-[#3e5042] sm:text-xs">{event.title}</h3>
           {!event.published && (
             <span className="rounded-full bg-[#f7f1e6] px-2 py-0.5 text-[8px] font-semibold text-[#9a7641]">
               Draf
             </span>
           )}
         </div>
-        <p className="mt-1.5 line-clamp-1 text-[10px] text-[#879187]">{event.description}</p>
-        <div className="mt-2 flex flex-wrap gap-x-3 gap-y-1 text-[9px] text-[#929b92]">
+        <p className="mt-1.5 line-clamp-2 text-[10px] leading-4 text-[#879187]">{event.description}</p>
+        <div className="mt-2 flex flex-wrap gap-x-2.5 gap-y-1.5 text-[9px] text-[#929b92]">
           <span className="inline-flex items-center gap-1">
             <Clock3 size={11} />
             {isToday ? "Hari ini" : formatDate(date, { weekday: "short" })},{" "}

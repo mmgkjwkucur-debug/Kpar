@@ -27,6 +27,8 @@ import {
 } from "firebase/auth";
 import { FormEvent, useEffect, useState } from "react";
 import { auth, db } from "@/lib/firebase";
+import { MobileHeader } from "@/components/mobile-header";
+import { MobileNav } from "@/components/mobile-nav";
 import { signInWithUsername } from "@/lib/username-login";
 
 type EventItem = {
@@ -234,7 +236,8 @@ export default function AdminPage() {
   }
 
   return (
-    <main className="min-h-screen bg-[#faf9f5] px-5 py-8 text-[#26392f] sm:px-8 sm:py-12">
+    <main className="min-h-screen bg-[#faf9f5] px-4 pb-24 pt-5 text-[#26392f] sm:px-8 sm:py-12 sm:pb-24 lg:pb-12">
+      <MobileHeader title="Kelola agenda" />
       <div className="mx-auto max-w-5xl">
         <header className="mb-10 flex items-center justify-between gap-4">
           <Link href="/" className="inline-flex items-center gap-3">
@@ -440,6 +443,7 @@ export default function AdminPage() {
           </>
         )}
       </div>
+      {access === "admin" && <MobileNav active="agenda" canManageMembers isAdmin />}
     </main>
   );
 }
