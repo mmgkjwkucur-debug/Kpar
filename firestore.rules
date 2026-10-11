@@ -1,0 +1,114 @@
+rules_version = '2';
+
+service cloud.firestore {
+  function isAdmin() {
+    return request.auth != null && request.auth.token.admin == true;
+  }
+
+  function isCoordinator() {
+    return request.auth != null && request.auth.coordinator == true;
+  }
+
+  function isManager() {
+    return isAdmin() || isCoordinator();
+  }
+
+  function isInternal() {
+    return request.auth != null
+      && (request.auth.token.internal == true || isAdmin());
+  }
+
+  match /databases/{database}/documents {
+    match /events/{eventId} {
+      allow read: if isInternal();
+      allow create, update, delete: if isAdmin();
+    }
+
+    match /users/{userId} {
+      allow get: if isInternal()
+        && (isManager() || request.auth.uid == userId);
+      allow list: if isManager();
+      allow create, update, delete: if false;
+    }
+
+    match /classAssignments/{className} {
+      allow read: if isManager();
+      allow write: if false;
+    }
+
+    match /children/{childId} {
+      allow read: if isInternal();
+      allow create: if isAdmin()
+        && request.resource.data.keys().hasAll([
+          'name', 'className', 'attendanceCode',
+          'active', 'createdAt', 'updatedAt'
+        ])
+        && request.resource.data.keys().hasOnly([
+          'name', 'className', 'attendanceCode',
+          'active', 'createdAt', 'updatedAt'
+        ])
+        && request.resource.data.name is string
+        && request.resource.data.name.size() > 0
+        && request.resource.data.name.size() <= 120
+        && request.resource.data.className in [
+          'Balita', 'Pratama', 'Madya', 'Remaja'
+        ]
+        && request.resource.data.attendanceCode is string
+        && request.resource.data.attendanceCode.matches('^[a-f0-9-]{36}$')
+        && request.resource.data.active == true
+        && request.resource.data.createdAt == request.time
+        && request.resource.data.updatedAt == request.time;
+      allow update: if isAdmin()
+        && request.resource.data.keys().hasAll([
+          'name', 'className', 'attendanceCode',
+          'active', 'createdAt', 'updatedAt'
+        ])
+        && request.resource.data.keys().hasOnly([
+          'name', 'dateOfBirth', 'className', 'attendanceCode',
+          'active', 'createdAt', 'updatedAt'
+        ])
+        && request.resource.data.name is string
+        && request.resource.data.name.size() > 0
+        && request.resource.data.name.size() <= 120
+        && (!('dateOfBirth' in request.resource.data)
+          || (request.resource.data.dateOfBirth is timestamp
+            && request.resource.data.dateOfBirth <= request.time))
+        && request.resource.data.className in [
+          'Balita', 'Pratama', 'Madya', 'Remaja'
+        ]
+        && request.resource.data.attendanceCode == resource.data.attendanceCode
+        && request.resource.data.createdAt == resource.data.createdAt
+        && request.resource.data.active is bool
+        && request.resource.data.updatedAt == request.time;
+      allow delete: if isAdmin();
+    }
+
+    match /attendance/{recordId} {
+      allow read: if isInternal();
+      allow create: if isInternal()
+        && request.resource.data.keys().hasOnly([
+          'eventId', 'childId', 'checkedAt', 'checkedBy', 'status'
+        ])
+        && request.resource.data.keys().hasAll([
+          'eventId', 'childId', 'checkedAt', 'checkedBy', 'status'
+        ])
+        && request.resource.data.eventId is string
+        && request.resource.data.childId is string
+        && recordId == request.resource.data.eventId
+          + '__' + request.resource.data.childId
+        && request.resource.data.checkedAt == request.time
+        && request.resource.data.checkedBy == request.auth.uid
+        && request.resource.data.status == 'hadir'
+        && exists(/databases/$(database)/documents/events/$(request.resource.data.eventId))
+        && get(/databases/$(database)/documents/events/$(request.resource.data.eventId)).data.published == true
+        && exists(/databases/$(database)/documents/children/$(request.resource.data.childId))
+        && get(/databases/$(database)/documents/children/$(request.resource.data.childId)).data.active == true
+        && !exists(/databases/$(database)/documents/attendance/$(recordId));
+      allow update, delete: if false;
+    }
+
+    match /usernames/{username} {
+      allow read, write: if false;
+    }
+  }
+}
