@@ -16,12 +16,16 @@
   "dependencies": {
     "@zxing/browser": "0.1.5",
     "firebase": "^12.9.0",
-    "firebase-admin": "^13.10.0",
+    "firebase-admin": "13.10.0",
     "lucide-react": "^1.55.0",
     "next": "16.4.0",
     "qrcode": "^1.5.4",
     "react": "19.3.0",
     "react-dom": "19.3.0"
+  },
+  "overrides": {
+    "jwks-rsa": "3.2.2",
+    "jose": "4.15.9"
   },
   "devDependencies": {
     "@tailwindcss/turbopack": "^4",
